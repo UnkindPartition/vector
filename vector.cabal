@@ -131,6 +131,7 @@ Library
 
   Install-Includes:
         vector.h
+        stacktracetools.h
 
   Build-Depends: base >= 4.8 && < 4.16
                , primitive >= 0.6.4.0 && < 0.8
