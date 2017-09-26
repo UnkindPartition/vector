@@ -115,6 +115,9 @@ import Data.Word ( Word )
 import Data.Int  ( Int64 )
 #endif
 
+GHC_STACKTRACE_IMPORTS
+
+
 data Chunk v a = Chunk Int (forall m. (PrimMonad m, Vector v a) => Mutable v (PrimState m) a -> m ())
 
 -- | Monadic streams
@@ -816,7 +819,7 @@ enumFromTo_small x y = x `seq` y `seq` fromStream (Stream step (Just x)) (Exact 
 -- unsigned types). See http://hackage.haskell.org/trac/ghc/ticket/3744
 --
 
-enumFromTo_int :: forall m v. Monad m => Int -> Int -> Bundle m v Int
+enumFromTo_int :: forall m v. (Monad m, HasCallStack) => Int -> Int -> Bundle m v Int
 {-# INLINE_FUSED enumFromTo_int #-}
 enumFromTo_int x y = x `seq` y `seq` fromStream (Stream step (Just x)) (Exact (len x y))
   where
@@ -835,7 +838,7 @@ enumFromTo_int x y = x `seq` y `seq` fromStream (Stream step (Just x)) (Exact (l
                   | z <  y    = return $ Yield z (Just (z+1))
                   | otherwise = return $ Done
 
-enumFromTo_intlike :: (Integral a, Monad m) => a -> a -> Bundle m v a
+enumFromTo_intlike :: (Integral a, Monad m, HasCallStack) => a -> a -> Bundle m v a
 {-# INLINE_FUSED enumFromTo_intlike #-}
 enumFromTo_intlike x y = x `seq` y `seq` fromStream (Stream step (Just x)) (Exact (len x y))
   where
@@ -872,7 +875,7 @@ enumFromTo_intlike x y = x `seq` y `seq` fromStream (Stream step (Just x)) (Exac
 
 
 
-enumFromTo_big_word :: (Integral a, Monad m) => a -> a -> Bundle m v a
+enumFromTo_big_word :: (Integral a, Monad m, HasCallStack) => a -> a -> Bundle m v a
 {-# INLINE_FUSED enumFromTo_big_word #-}
 enumFromTo_big_word x y = x `seq` y `seq` fromStream (Stream step (Just x)) (Exact (len x y))
   where

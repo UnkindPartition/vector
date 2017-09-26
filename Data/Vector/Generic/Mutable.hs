@@ -78,6 +78,8 @@ import Prelude hiding ( length, null, replicate, reverse, map, read,
 
 #include "vector.h"
 
+GHC_STACKTRACE_IMPORTS
+
 {-
 type family Immutable (v :: * -> * -> *) :: * -> *
 
@@ -510,7 +512,7 @@ null v = length v == 0
 
 -- | Yield a part of the mutable vector without copying it. The vector must
 -- contain at least @i+n@ elements.
-slice :: MVector v a
+slice :: (MVector v a, HasCallStack)
       => Int  -- ^ @i@ starting index
       -> Int  -- ^ @n@ length
       -> v s a
