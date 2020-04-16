@@ -1492,7 +1492,7 @@ unsafeCopy = G.unsafeCopy
 
 -- | /O(n)/ Copy an immutable vector into a mutable one. The two vectors must
 -- have the same length.
-copy :: (Unbox a, PrimMonad m) => MVector (PrimState m) a -> Vector a -> m ()
+copy :: (Unbox a, PrimMonad m, HasCallStack) => MVector (PrimState m) a -> Vector a -> m ()
 {-# INLINE copy #-}
 copy = G.copy
 

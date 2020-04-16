@@ -185,10 +185,15 @@ import Data.Traversable ( Traversable )
 import qualified GHC.Exts as Exts
 #endif
 
+-- Data.Vector.Internal.Check is unused
+#define NOT_VECTOR_MODULE
+#include "vector.h"
+
+GHC_STACKTRACE_IMPORTS
+
 #if __GLASGOW_HASKELL__ >= 708
 type role Vector representational
 #endif
-
 -- | Unboxed vectors of primitive types
 data Vector a = Vector {-# UNPACK #-} !Int
                        {-# UNPACK #-} !Int
@@ -316,7 +321,7 @@ null = G.null
 -- --------
 
 -- | O(1) Indexing
-(!) :: Prim a => Vector a -> Int -> a
+(!) :: (Prim a, HasCallStack) => Vector a -> Int -> a
 {-# INLINE (!) #-}
 (!) = (G.!)
 
@@ -326,12 +331,12 @@ null = G.null
 (!?) = (G.!?)
 
 -- | /O(1)/ First element
-head :: Prim a => Vector a -> a
+head :: (Prim a, HasCallStack) => Vector a -> a
 {-# INLINE head #-}
 head = G.head
 
 -- | /O(1)/ Last element
-last :: Prim a => Vector a -> a
+last :: (Prim a, HasCallStack) => Vector a -> a
 {-# INLINE last #-}
 last = G.last
 
@@ -372,19 +377,19 @@ unsafeLast = G.unsafeLast
 -- Here, no references to @v@ are retained because indexing (but /not/ the
 -- elements) is evaluated eagerly.
 --
-indexM :: (Prim a, Monad m) => Vector a -> Int -> m a
+indexM :: (Prim a, Monad m, HasCallStack) => Vector a -> Int -> m a
 {-# INLINE indexM #-}
 indexM = G.indexM
 
 -- | /O(1)/ First element of a vector in a monad. See 'indexM' for an
 -- explanation of why this is useful.
-headM :: (Prim a, Monad m) => Vector a -> m a
+headM :: (Prim a, Monad m, HasCallStack) => Vector a -> m a
 {-# INLINE headM #-}
 headM = G.headM
 
 -- | /O(1)/ Last element of a vector in a monad. See 'indexM' for an
 -- explanation of why this is useful.
-lastM :: (Prim a, Monad m) => Vector a -> m a
+lastM :: (Prim a, Monad m, HasCallStack) => Vector a -> m a
 {-# INLINE lastM #-}
 lastM = G.lastM
 
@@ -411,7 +416,7 @@ unsafeLastM = G.unsafeLastM
 
 -- | /O(1)/ Yield a slice of the vector without copying it. The vector must
 -- contain at least @i+n@ elements.
-slice :: Prim a
+slice :: (Prim a, HasCallStack)
       => Int   -- ^ @i@ starting index
       -> Int   -- ^ @n@ length
       -> Vector a
@@ -421,13 +426,13 @@ slice = G.slice
 
 -- | /O(1)/ Yield all but the last element without copying. The vector may not
 -- be empty.
-init :: Prim a => Vector a -> Vector a
+init :: (Prim a, HasCallStack) => Vector a -> Vector a
 {-# INLINE init #-}
 init = G.init
 
 -- | /O(1)/ Yield all but the first element without copying. The vector may not
 -- be empty.
-tail :: Prim a => Vector a -> Vector a
+tail :: (Prim a, HasCallStack) => Vector a -> Vector a
 {-# INLINE tail #-}
 tail = G.tail
 
@@ -774,7 +779,7 @@ reverse = G.reverse
 -- often much more efficient.
 --
 -- > backpermute <a,b,c,d> <0,3,2,3,1,0> = <a,d,c,d,b,a>
-backpermute :: Prim a => Vector a -> Vector Int -> Vector a
+backpermute :: (Prim a, HasCallStack) => Vector a -> Vector Int -> Vector a
 {-# INLINE backpermute #-}
 backpermute = G.backpermute
 
@@ -1415,6 +1420,6 @@ unsafeCopy = G.unsafeCopy
 
 -- | /O(n)/ Copy an immutable vector into a mutable one. The two vectors must
 -- have the same length.
-copy :: (Prim a, PrimMonad m) => MVector (PrimState m) a -> Vector a -> m ()
+copy :: (Prim a, PrimMonad m, HasCallStack) => MVector (PrimState m) a -> Vector a -> m ()
 {-# INLINE copy #-}
 copy = G.copy

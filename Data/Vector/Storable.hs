@@ -199,6 +199,8 @@ import Unsafe.Coerce
 #define NOT_VECTOR_MODULE
 #include "vector.h"
 
+GHC_STACKTRACE_IMPORTS
+
 #if __GLASGOW_HASKELL__ >= 708
 type role Vector nominal
 
@@ -343,7 +345,7 @@ null = G.null
 -- --------
 
 -- | O(1) Indexing
-(!) :: Storable a => Vector a -> Int -> a
+(!) :: (Storable a, HasCallStack) => Vector a -> Int -> a
 {-# INLINE (!) #-}
 (!) = (G.!)
 
@@ -353,12 +355,12 @@ null = G.null
 (!?) = (G.!?)
 
 -- | /O(1)/ First element
-head :: Storable a => Vector a -> a
+head :: (Storable a, HasCallStack) => Vector a -> a
 {-# INLINE head #-}
 head = G.head
 
 -- | /O(1)/ Last element
-last :: Storable a => Vector a -> a
+last :: (Storable a, HasCallStack) => Vector a -> a
 {-# INLINE last #-}
 last = G.last
 
@@ -399,19 +401,19 @@ unsafeLast = G.unsafeLast
 -- Here, no references to @v@ are retained because indexing (but /not/ the
 -- elements) is evaluated eagerly.
 --
-indexM :: (Storable a, Monad m) => Vector a -> Int -> m a
+indexM :: (Storable a, Monad m, HasCallStack) => Vector a -> Int -> m a
 {-# INLINE indexM #-}
 indexM = G.indexM
 
 -- | /O(1)/ First element of a vector in a monad. See 'indexM' for an
 -- explanation of why this is useful.
-headM :: (Storable a, Monad m) => Vector a -> m a
+headM :: (Storable a, Monad m, HasCallStack) => Vector a -> m a
 {-# INLINE headM #-}
 headM = G.headM
 
 -- | /O(1)/ Last element of a vector in a monad. See 'indexM' for an
 -- explanation of why this is useful.
-lastM :: (Storable a, Monad m) => Vector a -> m a
+lastM :: (Storable a, Monad m, HasCallStack) => Vector a -> m a
 {-# INLINE lastM #-}
 lastM = G.lastM
 
@@ -438,7 +440,7 @@ unsafeLastM = G.unsafeLastM
 
 -- | /O(1)/ Yield a slice of the vector without copying it. The vector must
 -- contain at least @i+n@ elements.
-slice :: Storable a
+slice :: (Storable a, HasCallStack)
       => Int   -- ^ @i@ starting index
       -> Int   -- ^ @n@ length
       -> Vector a
@@ -448,13 +450,13 @@ slice = G.slice
 
 -- | /O(1)/ Yield all but the last element without copying. The vector may not
 -- be empty.
-init :: Storable a => Vector a -> Vector a
+init :: (Storable a, HasCallStack) => Vector a -> Vector a
 {-# INLINE init #-}
 init = G.init
 
 -- | /O(1)/ Yield all but the first element without copying. The vector may not
 -- be empty.
-tail :: Storable a => Vector a -> Vector a
+tail :: (Storable a, HasCallStack) => Vector a -> Vector a
 {-# INLINE tail #-}
 tail = G.tail
 
@@ -801,7 +803,7 @@ reverse = G.reverse
 -- often much more efficient.
 --
 -- > backpermute <a,b,c,d> <0,3,2,3,1,0> = <a,d,c,d,b,a>
-backpermute :: Storable a => Vector a -> Vector Int -> Vector a
+backpermute :: (Storable a, HasCallStack) => Vector a -> Vector Int -> Vector a
 {-# INLINE backpermute #-}
 backpermute = G.backpermute
 
@@ -1470,7 +1472,7 @@ unsafeCopy = G.unsafeCopy
 
 -- | /O(n)/ Copy an immutable vector into a mutable one. The two vectors must
 -- have the same length.
-copy :: (Storable a, PrimMonad m) => MVector (PrimState m) a -> Vector a -> m ()
+copy :: (Storable a, PrimMonad m, HasCallStack) => MVector (PrimState m) a -> Vector a -> m ()
 {-# INLINE copy #-}
 copy = G.copy
 
