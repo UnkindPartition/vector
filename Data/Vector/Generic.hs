@@ -253,7 +253,7 @@ head :: (Vector v a, HasCallStack) => v a -> a
 head v = v ! 0
 
 -- | /O(1)/ Last element
-last :: Vector v a => v a -> a
+last :: (Vector v a, HasCallStack) => v a -> a
 {-# INLINE_FUSED last #-}
 last v = v ! (length v - 1)
 
